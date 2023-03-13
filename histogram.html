@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Histogram</title>
+</head>
+<body>
+	<canvas id="histogram" width="500" height="500"></canvas>
+	<br>
+	<label for="inputData">Please enter comma-separated values:</label>
+	<input type="text" id="inputData" placeholder="e.g. 10,20,30">
+	<button onclick="update()">Update</button>
+	<script>
+		var canvas = document.getElementById('histogram');
+		var ctx = canvas.getContext('2d');
+
+		// Generate random data
+		var data = [];
+		for (var i = 0; i < 20; i++) {
+			data.push(Math.floor(Math.random() * 50));
+		}
+
+		// Draw histogram
+		drawHistogram(data);
+
+		function drawHistogram(data) {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			// Calculate histogram properties
+			var maxValue = Math.max(...data);
+			var minValue = Math.min(...data);
+			var binWidth = Math.ceil((maxValue - minValue) / 10); // Divide the range of values into 10 equal-width bins
+			var numBins = Math.ceil((maxValue - minValue) / binWidth);
+			var histogramData = Array(numBins).fill(0);
+
+			// Count the number of values in each bin
+			for (var i = 0; i < data.length; i++) {
+				var binIndex = Math.floor((data[i] - minValue) / binWidth);
+				histogramData[binIndex]++;
+			}
+
+			// Draw histogram bars
+			var barWidth = canvas.width / numBins;
+			for (var i = 0; i < numBins; i++) {
+				var barHeight = canvas.height * histogramData[i] / data.length;
+				ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth, barHeight);
+			}
+		}
+
+		function update() {
+			// Get input values
+			var inputData = document.getElementById('inputData').value.trim();
+
+			// Parse input values into an array of numbers
+			if (inputData.length > 0) {
+				data = inputData.split(',').map(function(value) {
+					return parseFloat(value.trim());
+				});
+			}
+
+			// Draw updated histogram
+			drawHistogram(data);
+		}
+	</script>
+</body>
+</html>
